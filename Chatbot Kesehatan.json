@@ -1,0 +1,117 @@
+{
+  "name": "Chatbot Kesehatan",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! Saya chatbot kesehatan. Silakan tanyakan tentang gejala penyakit ringan, obat bebas, atau tips menjaga kesehatan.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1c630002-c0a5-426f-ad3e-893939f8c957",
+      "name": "When chat message received",
+      "webhookId": "40b73a0a-0f93-4c69-a3e8-4cf9f4894471"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Role:\nAnda adalah chatbot AI yang bertugas sebagai pemberi bantuan dan layanan informasi kesehatan dasar yang ramah kepada pengguna.\n\nTask:\nTugas Anda adalah menjawab pertanyaan pengguna mengenai:\n- gejala penyakit ringan\n- informasi penyakit umum\n- obat bebas yang dapat dibeli di apotek\n- tips menjaga kesehatan\n\nBerikan jawaban yang jelas, singkat, dan mudah dipahami oleh pengguna.\n\nConstraints:\nJawaban harus tetap fokus pada topik kesehatan dasar, jika pengguna menanyakan hal di luar topik kesehatan, beri tahu bahwa chatbot hanya dapat menjawab pertanyaan mengenai kesehatan dasar, jangan memberikan diagnosis medis atau menggantikan saran dari dokter.\n\nTone:\nGunakan bahasa Indonesia yang jelas, sopan, dan mudah dipahami.\n\nExamples:\n\nPertanyaan: Apa gejala flu?\nJawaban: Gejala flu biasanya meliputi demam, batuk, pilek, sakit tenggorokan, sakit kepala, dan tubuh terasa lelah."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3bdfbb6e-460c-48f9-a3ac-124477d8ce0f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        160
+      ],
+      "id": "5489bf32-976f-414a-92fe-cda41762dc9a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ld07OS4sWvcTz2zZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": "={{ 5 }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        304,
+        160
+      ],
+      "id": "8822e44d-e073-44bd-b416-0bf30b9b2581",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "51367ebc-7288-465c-b4c2-dc9e9cabcf5e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "75b35883589ebe79a386972c89480697e0f22fa150d96bc842bb5e8b99ebfdb4"
+  },
+  "id": "Wz0YeDEDHbzMYGTx",
+  "tags": []
+}
